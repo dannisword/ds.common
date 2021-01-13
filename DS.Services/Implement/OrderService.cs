@@ -72,7 +72,8 @@ namespace DS.Services.Implement
                 var msg = e.Message;
                 this.UnitOfWork.Rollback();
             }
-            return 1;//UnitOfWork.Commit();
+            UnitOfWork.Commit();
+            return 1;
         }
         public int UpdateDetail(OrderDetail detail)
         {
