@@ -53,6 +53,7 @@ namespace DS.Services.Implement
             }
             catch (Exception ex)
             {
+                var msg = ex.Message;
                 this.UnitOfWork.Rollback();
                 eCode = -1;
             }
@@ -68,6 +69,7 @@ namespace DS.Services.Implement
             }
             catch (Exception e)
             {
+                var msg = e.Message;
                 this.UnitOfWork.Rollback();
             }
             return 1;//UnitOfWork.Commit();
