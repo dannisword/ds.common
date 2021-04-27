@@ -9,6 +9,10 @@ using DS.Repository.Db;
 //https://medium.com/@martinstm/repository-pattern-net-core-78d0646b6045
 namespace DS.Repository.Infrastructure
 {
+    /// <summary>
+    /// Repository
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private readonly IUnitOfWork unitOfWork;
@@ -31,6 +35,11 @@ namespace DS.Repository.Infrastructure
         public TEntity Add(TEntity entity)
         {
             this.dbSet.Add(entity);
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> afbddc0bd08a38f72f36529534d3ef29a5305162
             return entity;
         }
         public void Update(TEntity entity)
