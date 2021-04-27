@@ -26,13 +26,11 @@ namespace DS.Repository.Infrastructure
         }
         public IEnumerable<TEntity> FindAll()
         {
-            return this.dbContext.Set<TEntity>().ToList();
+            return this.dbContext.Set<TEntity>();
         }
-        public TEntity Insert(TEntity entity)
+        public TEntity Add(TEntity entity)
         {
             this.dbSet.Add(entity);
-            //this.dbContext.SaveChanges();
-
             return entity;
         }
         public void Update(TEntity entity)

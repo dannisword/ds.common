@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,13 +12,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using AutoMapper;
 
 using DS.Common.Entities;
 using DS.Repository.Db;
-using DS.Repository.Implement;
 using DS.Repository.Infrastructure;
-using DS.Repository.Interface;
 using DS.Services.Implement;
 using DS.Services.Interface;
 
@@ -36,30 +35,69 @@ namespace DS.Webapi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+            .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.IgnoreNullValues = true;
+                });
 
             var connection = this.Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<BloggingContext>(
-                         options => options.UseSqlServer(connection));
+            services.AddDbContext<SQLContext>(options => options.UseSqlServer(connection));
 
-            services.AddScoped<IBlogService, BlogService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<DbContext, BloggingContext>();
-
-            //Repoistories
-            //services.AddScoped<IRepository<Order>, Repository<Order>>();
-            //services.AddScoped<IRepository<OrderDetail>, Repository<OrderDetail>>();
-            //services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<DbContext, SQLContext>();
 
             //Services
-            services.AddScoped<IOrderService, OrderService>();
-
-
-
+            services.AddScoped<IAppService, AppService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            //this.addRepositoriesScoped(services);
+            this.configureAPIDocument(services);
+        }
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint(
+                    "/swagger/v1/swagger.json",
+                    this.Configuration.GetSection("Swagger:Title").Value
+                );
+            });
 
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
+            app.UseHttpsRedirection();
 
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
+
+        private void configureAPIDocument(IServiceCollection services)
+        {
+            // Register the Swagger generator, defining 1 or more Swagger documents app
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = this.Configuration.GetSection("Swagger:Title").Value,
+                    Version = "v1"
+                });
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{AppDomain.CurrentDomain.FriendlyName}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
         }
         private void addRepositoriesScoped(IServiceCollection services)
         {
@@ -72,8 +110,8 @@ namespace DS.Webapi
                 {
                     if (type.FullName.Contains("DS.Common.Entities") == true)
                     {
-                        //Console.WriteLine(type.FullName);
-                        services.AddScoped<IRepository<Order>, Repository<Order>>();
+                        Console.WriteLine(type.FullName);
+                        //services.AddScoped<IRepository<Order>, Repository<Order>>();
                     }
                 }
             }
@@ -111,24 +149,6 @@ namespace DS.Webapi
             return q.ToList();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-        }
 
     }
 }

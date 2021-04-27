@@ -22,8 +22,7 @@ namespace DS.Services.Infrastructure
         public int Add(T t)
         {
             this.Context.Set<T>().Add(t);
-
-            return 0;
+            return this.Context.SaveChanges();
         }
     }
 

@@ -8,19 +8,23 @@ using DS.Common.Models;
 
 namespace DS.Repository.Db
 {
-    public class BloggingContext : DbContext
+    public class SQLContext : DbContext
     {
-        //public virtual DbSet<Blog> Blog { get; set; }
-        //public virtual DbSet<Post> Post { get; set; }
+        public DbSet<UserAccount> UserAccounts { get; set; }
 
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<AppStore> AppStores { get; set; }
+        
+        public DbSet<UserRole> UserRoles { get; set; }
 
-        public BloggingContext() : base()
+        public DbSet<Role> Roles { get; set; }
+
+        public DbSet<RoleApp> RoleApps { get; set; }
+
+        public SQLContext() : base()
         {
         }
 
-        public BloggingContext(DbContextOptions<BloggingContext> options) : base(options)
+        public SQLContext(DbContextOptions<SQLContext> options) : base(options)
         {
         }
 
@@ -30,22 +34,6 @@ namespace DS.Repository.Db
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
-
-
-            /*
-                        modelBuilder.Entity<Blog>(entity =>
-                        {
-                            entity.Property(e => e.Url).IsRequired();
-                        });
-
-                        modelBuilder.Entity<Post>(entity =>
-                        {
-                            entity.HasOne(d => d.Blog)
-                                .WithMany(p => p.Post)
-                                .HasForeignKey(d => d.BlogId);
-                        });*/
-
             this.ModelBuilder(modelBuilder);
         }
         private void ModelBuilder(ModelBuilder modelBuilder)
@@ -60,7 +48,7 @@ namespace DS.Repository.Db
                     if (type.FullName.Contains("DS.Common.Entities") == true)
                     {
                         //type.IsNestedFamily
-                        var instance = Activator.CreateInstance(type) as ModelBase;
+                        var instance = Activator.CreateInstance(type) as EntityBase;
                         if (instance != null)
                         {
                             instance.ModelBuilder(modelBuilder);

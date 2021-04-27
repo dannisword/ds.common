@@ -12,7 +12,7 @@ namespace DS.Repository.Infrastructure
     {
         IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
         IEnumerable<TEntity> FindAll();
-        TEntity Insert(TEntity entity);
+        TEntity Add(TEntity entity);
         void Update(TEntity entity);
         void Delete(TEntity entity);
         IQueryable<TEntity> Queryable();

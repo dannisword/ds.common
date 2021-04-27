@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 using DS.Common.Entities;
 using DS.Repository.Db;
-using DS.Repository.Implement;
+
 //https://stackoverflow.com/questions/16064902/dependency-injection-in-unit-of-work-pattern-using-repositories
 namespace DS.Repository.Infrastructure
 {
@@ -16,7 +16,7 @@ namespace DS.Repository.Infrastructure
         private bool disposed = false;
         private Dictionary<string, dynamic> repositories;
         public DbContext DbContext { get; private set; }
-        //private readonly Type ContextType;
+
         public UnitOfWork(DbContext dbContext)
         {
             this.DbContext = dbContext;
