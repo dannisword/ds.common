@@ -35,11 +35,6 @@ namespace DS.Repository.Infrastructure
         public TEntity Add(TEntity entity)
         {
             this.dbSet.Add(entity);
-<<<<<<< HEAD
-=======
-
-
->>>>>>> afbddc0bd08a38f72f36529534d3ef29a5305162
             return entity;
         }
         public void Update(TEntity entity)
